@@ -47,9 +47,6 @@ Requires tt_llk submodule: `cd tt-metal-sfpu && git submodule update --init tt_m
 
 ```bash
 cd /work/llvm/llvm-tt-sfpu
-SFPI_GCC_TARGET_DIR=/work/llvm/gcc12-compat \
-SFPI_GCC12_CXX=/usr/riscv64-linux-gnu/include/c++/12 \
-SFPI_SYSROOT=/opt/tenstorrent/sfpi/compiler/riscv-tt-elf/include \
 TT_METAL_HOME=/work/llvm/tt-metal-sfpu \
 LLVM_DIR=/work/llvm/llvm-project-sfpu/build/bin \
 ./tests/test_all_kernels.sh
@@ -80,22 +77,17 @@ The venv must be activated first since tt-smi is installed there.
 
 ## Sysroot / Header Setup
 
-This system has a GCC 15 SFPI toolchain at `/opt/tenstorrent/sfpi/` (riscv-tt-elf triple). The LLVM
-SFPU project was developed against GCC 12 headers. Key adaptations:
+Uses the GCC 15 SFPI toolchain at `/opt/tenstorrent/sfpi/` (riscv-tt-elf triple).
+The test script auto-detects the sysroot layout. Key adaptations for clang compatibility:
 
-- **C++ headers**: Use Debian's `libstdc++-12-dev-riscv64-cross` (`/usr/riscv64-linux-gnu/include/c++/12`)
-  because GCC 14+/15 headers use `__remove_reference` which clang 19 doesn't support.
-- **C sysroot**: Use TT's bare-metal sysroot (`/opt/tenstorrent/sfpi/compiler/riscv-tt-elf/include`),
-  not the riscv64 glibc one.
-- **GCC target dir**: A patched target-specific directory at `/work/llvm/gcc12-compat/` provides
-  `bits/c++config.h` and a minimal `bits/os_defines.h` for newlib.
-- **SFPI headers**: `/work/llvm/tt-metal-sfpu/runtime/sfpi/include/` has symlinks to system SFPI headers
-  plus a custom `sfpi_builtins.h` that maps short-form GCC builtins directly to LLVM intrinsics.
+- **sfpi_compat.h**: Pre-includes `<type_traits>` etc. before overriding `__has_builtin`,
+  so GCC 15's libstdc++ doesn't try to use `__remove_reference` (clang 19 lacks it).
+- **sfpi_builtins.h** (custom, in `llvm-tt-sfpu/switchover/`): Maps short-form GCC builtins
+  directly to `__builtin_riscv_tt_*` LLVM intrinsics. Deployed to `runtime/sfpi/include/`.
 - **ckernel.h**: Line 316 has `uint32_t short` (GCC extension), wrapped in `#ifndef __clang__`.
 
 ## Prerequisites
 
 - cmake, ninja-build, gcc/g++
-- `libstdc++-12-dev-riscv64-cross` (for GCC 12 C++ headers compatible with clang 19)
 - Python 3.8+ with tt-metal dependencies
 - GCC SFPU sysroot at `/opt/tenstorrent/sfpi/`
