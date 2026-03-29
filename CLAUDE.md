@@ -53,6 +53,12 @@ LLVM_DIR=/work/llvm/llvm-project-sfpu/build/bin \
 # Expected: 87/91 pass (4 failures from SFPI header version mismatch, not LLVM issues)
 ```
 
+### Check status of hardware (requires WH or BH card)
+
+```bash
+(. ~/.tenstorrent-venv/bin/activate && tt-smi -s)
+```
+
 ### Hardware test (requires BH card)
 
 ```bash
@@ -70,7 +76,7 @@ Check perf with `TT_METAL_DEVICE_PROFILER=1` to measure instruction reduction im
 If the Tenstorrent hardware gets into a bad state, reset it with tt-smi:
 
 ```bash
-(. .tenstorrent-venv/bin/activate && tt-smi -r)
+(. ~/.tenstorrent-venv/bin/activate && tt-smi -r)
 ```
 
 The venv must be activated first since tt-smi is installed there.
