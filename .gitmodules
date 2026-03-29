@@ -1,9 +1,9 @@
-[submodule "llvm-project-sfpu"]
-	path = llvm-project-sfpu
-	url = https://github.com/olofj/llvm-project-sfpu.git
 [submodule "llvm-tt-sfpu"]
 	path = llvm-tt-sfpu
 	url = https://github.com/olofj/llvm-tt-sfpu.git
 [submodule "tt-metal-sfpu"]
 	path = tt-metal-sfpu
 	url = https://github.com/olofj/tt-metal-sfpu.git
+[submodule "llvm-project-sfpu"]
+	path = llvm-project-sfpu
+	url = https://github.com/olofj/llvm-project-sfpu.git
