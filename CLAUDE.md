@@ -19,7 +19,7 @@ cmake -G Ninja -B build \
   -DLLVM_ENABLE_ASSERTIONS=ON \
   -DLLVM_PARALLEL_LINK_JOBS=2 \
   llvm
-ninja -C build -j$(nproc) clang llc llvm-mc
+ninja -C build -j$(nproc) clang llc llvm-mc llvm-objdump
 ```
 
 ## Setting Up the Runtime
